@@ -104,3 +104,37 @@ def get_db() -> connection.MySQLConnection:
         host=host,
         database=database
     )
+
+def main():
+    """
+    Main function that retrieves all rows from the 'users' table and logs them
+    with sensitive information redacted.
+    """
+    # Get the logger
+    logger = get_logger()
+
+    # Connect to the database
+    db = get_db()
+    cursor = db.cursor()
+
+    # Query to retrieve all rows from the users table
+    query = "SELECT * FROM users;"
+    cursor.execute(query)
+
+    # Column names for building log messages
+    columns = [desc[0] for desc in cursor.description]
+
+    # Fetch all rows and log each row
+    for row in cursor.fetchall():
+        row_data = "; ".join(
+            [f"{col}={val}" for col, val in zip(columns, row)]) + ";"
+        logger.info(row_data)
+
+    # Close database connection
+    cursor.close()
+    db.close()
+
+
+# Only run the main function if this module is executed directly
+if __name__ == "__main__":
+    main()
