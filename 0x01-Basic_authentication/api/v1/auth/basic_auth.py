@@ -2,7 +2,7 @@
 """Basic Authentication class"""
 
 import base64
-from typing import TypeVar
+from typing import TypeVar, Tuple, Optional
 from models.user import User
 from api.v1.auth.auth import Auth
 
@@ -61,6 +61,7 @@ class BasicAuth(Auth):
         # Split on the first occurrence of ':'
         user_email, user_password = decoded_base64_authorization_header.split(
             ":", 1)
+
         return user_email, user_password
 
     def user_object_from_credentials(
@@ -95,7 +96,7 @@ class BasicAuth(Auth):
 
     def current_user(self, request=None) -> TypeVar('User'):
         """
-        Retrieves the User instance based on the request's authorization header.
+        Retrieves the User instance based on the request's auth header
         Args:
             request: The HTTP request containing the authorization header.
         Returns:

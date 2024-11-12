@@ -17,22 +17,27 @@ class Auth:
         - True if excluded_paths is None or empty
         - False if path is in excluded_paths (slash tolerant)
         """
-        # Case: path is None
         if path is None:
             return True
 
-        # Case: excluded_paths is None or empty
         if not excluded_paths:
             return True
 
-        # Ensure paths are slash tolerant by normalizing paths
+        # Normalize path to be slash tolerant
         normalized_path = path if path.endswith('/') else f"{path}/"
 
-        # Check if normalized_path is in excluded_paths
         for excluded_path in excluded_paths:
+            # Normalize excluded_path
             normalized_excluded = excluded_path if excluded_path.endswith(
                 '/') else f"{excluded_path}/"
-            if normalized_path == normalized_excluded:
+
+            # Handle wildcard '*' at the end of excluded_path
+            if normalized_excluded.endswith("*/"):
+                # Match if path starts with the prefix before '*'
+                prefix = normalized_excluded[:-2]
+                if normalized_path.startswith(prefix):
+                    return False
+            elif normalized_path == normalized_excluded:
                 return False
 
         return True
