@@ -7,6 +7,7 @@ from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
 from flask_cors import (CORS, cross_origin)
 from api.v1.auth.auth import Auth
+from api.v1.auth.basic_auth import BasicAuth 
 import os
 
 
@@ -17,7 +18,11 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
 # Initialize `auth` based on the environment variable `AUTH_TYPE`
 auth = None
-if getenv("AUTH_TYPE") == "auth":
+auth_type = getenv("AUTH_TYPE")
+
+if auth_type == "basic_auth":
+    auth = BasicAuth()
+elif auth_type == "auth":
     auth = Auth()
 
 
