@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Basic Authentication class"""
 
+import base64
 from api.v1.auth.auth import Auth
 
 
@@ -19,3 +20,23 @@ class BasicAuth(Auth):
             return None
         # Return the part after "Basic "
         return authorization_header.split(" ", 1)[1]
+
+    def decode_base64_authorization_header(
+            self, base64_authorization_header: str) -> str:
+        """
+        Decodes a Base64 string (base64_authorization_header) to UTF-8 string.
+        Return None if base64_authorization_header is None, not a string, or
+        if it is not a valid Base64 encoding.
+        """
+        if base64_authorization_header is None or not isinstance(
+                base64_authorization_header, str):
+            return None
+
+        try:
+            # Decode the Base64 string
+            decoded_bytes = base64.b64decode(base64_authorization_header)
+            # Convert bytes to a UTF-8 string
+            return decoded_bytes.decode('utf-8')
+        except (base64.binascii.Error, UnicodeDecodeError):
+            # Return None if decoding fails
+            return None
