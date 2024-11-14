@@ -10,6 +10,7 @@ from api.v1.auth.auth import Auth
 from api.v1.auth.basic_auth import BasicAuth
 from api.v1.auth.session_auth import SessionAuth
 from api.v1.auth.session_exp_auth import SessionExpAuth
+from api.v1.auth.session_db_auth import SessionDBAuth
 import os
 
 
@@ -30,6 +31,8 @@ elif auth_type == "session_auth":
     auth = SessionAuth()
 elif auth_type == "session_exp_auth":
     auth = SessionExpAuth()
+elif auth_type == "session_db_auth":
+    auth = SessionDBAuth()
 
 
 @app.errorhandler(404)
@@ -71,7 +74,8 @@ def before_request():
         return
 
     # Check for Authorization header; abort with 401 if missing
-    if auth.authorization_header(request) and auth.session_cookie(request) is None:
+    if auth.authorization_header(
+            request) and auth.session_cookie(request) is None:
         abort(401)
 
     request.current_user = auth.current_user(request)
