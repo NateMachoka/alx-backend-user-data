@@ -18,7 +18,8 @@ def login():
         return jsonify({"error": "password missing"}), 400
 
     # Retrieve the user instance using the email
-    user = User.search(email)
+    user_list = User.search({"email": email})
+    user = user_list[0] if user_list else None
     if not user:
         return jsonify({"error": "no user found for this email"}), 404
 
