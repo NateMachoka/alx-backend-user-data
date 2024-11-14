@@ -57,20 +57,25 @@ def before_request():
 
     # List of paths that do not require authentication
     excluded_paths = [
-        '/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
+        '/api/v1/status/',
+        '/api/v1/unauthorized/',
+        '/api/v1/forbidden/',
+        '/api/v1/auth_session/login/'
+    ]
 
     # Check if the current request path requires authentication
     if not auth.require_auth(request.path, excluded_paths):
         return
 
     # Check for Authorization header; abort with 401 if missing
-    if auth.authorization_header(request) is None:
+    if auth.authorization_header(request) and auth.session_cookie(
+            request) is None:
         abort(401)
 
     request.current_user = auth.current_user(request)
 
     # Check if the current user is None; abort with 403 if so
-    if auth.current_user(request) is None:
+    if request.current_user is None:
         abort(403)
 
 
