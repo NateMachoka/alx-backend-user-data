@@ -28,6 +28,7 @@ elif auth_type == "auth":
 elif auth_type == "session_auth":
     auth = SessionAuth()
 
+
 @app.errorhandler(404)
 def not_found(error) -> str:
     """ Not found handler
