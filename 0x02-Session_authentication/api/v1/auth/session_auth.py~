@@ -1,0 +1,10 @@
+#!/usr/bin/env python3
+"""
+SessionAuth module for handling session-based authentication
+"""
+
+
+class SessionAuth(Auth):
+    """ Session authentication class that inherits from Aut
+    """
+    pass
