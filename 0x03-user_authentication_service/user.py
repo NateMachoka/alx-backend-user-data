@@ -27,3 +27,8 @@ class User(Base):
     hashed_password = Column(String(255), nullable=False)
     session_id = Column(String(255), nullable=True)
     reset_token = Column(String(255), nullable=True)
+
+
+if __name__ == "__main__":
+    engine = create_engine("sqlite:///example.db", echo=True)
+    Base.metadata.create_all(engine)
