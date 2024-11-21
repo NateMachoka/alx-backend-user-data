@@ -25,9 +25,10 @@ def _hash_password(password: str) -> bytes:
     """
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-def _generate_uuid(self) -> str:
-        """Generate a new UUID."""
-        return str(uuid.uuid4())
+
+def _generate_uuid() -> str:
+    """Generate a new UUID."""
+    return str(uuid.uuid4())
 
 
 class Auth:
@@ -77,7 +78,7 @@ class Auth:
         try:
             # Find the user by email
             user = self._db.find_user_by(email=email)
-            # Check if the password matches the hashed password stored in the DB
+            # Check if the pwd matches the hashed password stored in the DB
             if checkpw(password.encode(
                     'utf-8'), user.hashed_password.encode('utf-8')):
                 return True
@@ -100,10 +101,10 @@ class Auth:
         """
         try:
             user = self._db.find_user_by(email=email)
-            # Generate a new UUID for the session
-            session_id = _generate_uuid()
-            # Update the user's session_id in the database
-            self._db.update_user(user.id, session_id=session_id)
-            return session_id
         except NoResultFound:
-            raise ValueError
+            return None
+
+        # Generate a new UUID for the session
+        session_id = _generate_uuid()
+        self._db.update_user(user.id, session_id=session_id)
+        return session_id
