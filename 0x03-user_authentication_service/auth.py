@@ -5,7 +5,7 @@ Authentication module
 
 import bcrypt
 from db import DB, User
-from bcrypt import hashpw, gensalt
+from bcrypt import hashpw, gensalt, checkpw
 from typing import Optional
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError
@@ -55,3 +55,28 @@ class Auth:
             user = self._db.add_user(
                 email=email, hashed_password=hashed_password.decode('utf-8'))
             return user
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """
+        Validates a user's login by checking their email and password.
+
+        Args:
+            email (str): The user's email address.
+            password (str): The user's password.
+
+        Returns:
+            bool: True if the user exists and the password matches,
+                  otherwise False.
+        """
+        try:
+            # Find the user by email
+            user = self._db.find_user_by(email=email)
+            # Check if the password matches the hashed password stored in the DB
+            if checkpw(password.encode(
+                    'utf-8'), user.hashed_password.encode('utf-8')):
+                return True
+            else:
+                return False
+        except NoResultFound:
+            # If the user does not exist, return False
+            return False
