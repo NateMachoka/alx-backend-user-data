@@ -2,10 +2,11 @@
 """
 Basic Flask app with a single route.
 """
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from auth import Auth
 
 app = Flask(__name__)
-
+AUTH = Auth() 
 
 @app.route("/", methods=["GET"])
 def welcome():
