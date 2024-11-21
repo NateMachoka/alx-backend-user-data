@@ -140,9 +140,5 @@ class Auth:
         Returns:
             None
         """
-        try:
-            # Update the user's session_id to None
-            self._db.update_user(user_id, session_id=None)
-        except NoResultFound:
-            # If the user ID is invalid, just return None
-            pass
+        # Update the user's session_id to None
+        self._db.update_user(user_id, session_id=None)
