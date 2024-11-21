@@ -4,6 +4,8 @@ Authentication module
 """
 
 import bcrypt
+import uuid
+from uuid import uuid4
 from db import DB, User
 from bcrypt import hashpw, gensalt, checkpw
 from typing import Optional
@@ -84,3 +86,24 @@ class Auth:
         except NoResultFound:
             # If the user does not exist, return False
             return False
+
+    def create_session(self, email: str) -> str:
+        """
+        Creates a session for the user by generating a session ID and
+        updating the user's session ID in the database.
+
+        Args:
+            email (str): The user's email address.
+
+        Returns:
+            str: The session ID.
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+            # Generate a new UUID for the session
+            session_id = _generate_uuid()
+            # Update the user's session_id in the database
+            self._db.update_user(user.id, session_id=session_id)
+            return session_id
+        except NoResultFound:
+            raise ValueError
