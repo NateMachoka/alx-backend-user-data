@@ -98,6 +98,33 @@ def logout():
     return response
 
 
+@app.route('/profile', methods=['GET'], strict_slashes=False)
+def profile():
+    """
+    GET /profile route to retrieve the user's profile information.
+
+    Expected:
+        - The request must contain the session ID as a cookie.
+
+    Behavior:
+        - If a valid session, respond user's email and a 200 HTTP status.
+        - If not valid session, respond with a 403 HTTP status.
+
+    Returns:
+        - JSON payload with the user's email if the session is valid.
+        - A 403 error if the session is invalid.
+    """
+    session_id = request.cookies.get('session_id')
+
+    if not session_id:
+        abort(403)
+
+    user = AUTH.get_user_from_session_id(session_id)
+    if not user:
+        abort(403)
+
+    return jsonify({"email": user.email}), 200
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
