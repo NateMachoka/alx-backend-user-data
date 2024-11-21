@@ -38,7 +38,6 @@ def users() -> str:
         return jsonify({"message": "email already registered"}), 400
 
 
-
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login():
     """
@@ -64,6 +63,40 @@ def login():
     response.set_cookie('session_id', session_id)
 
     return response
+
+@app.route('/sessions', methods=['DELETE'], strict_slashes=False)
+def logout():
+    """
+    DELETE /sessions route to log out the user.
+
+    Expected:
+        - The request must contain the session ID as a cookie with the key "session_id".
+
+    Behavior:
+        - If a valid session exists, destroy it and redirect to GET /.
+        - If no valid session exists, respond with a 403 HTTP status.
+
+    Returns:
+        - A redirection to the root route if successful.
+        - A 403 error if the session ID is invalid.
+    """
+    session_id = request.cookies.get('session_id')
+
+    if not session_id:
+        abort(403)
+
+    user = AUTH.get_user_from_session_id(session_id)
+    if not user:
+        abort(403)
+
+    # Destroy the session
+    AUTH.destroy_session(user.id)
+
+    # Redirect to the root route
+    response = make_response('', 302)
+    response.headers['Location'] = '/'
+    return response
+
 
 
 if __name__ == "__main__":
