@@ -64,6 +64,7 @@ def login():
 
     return response
 
+
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
 def logout():
     """
@@ -125,6 +126,27 @@ def profile():
 
     return jsonify({"email": user.email}), 200
 
+
+@app.route('/reset_password', methods=['POST'], strict_slashes=False)
+def get_reset_password_token() -> str:
+    """
+    Handle POST /reset_password route.
+
+    Expects:
+        Form data containing "email".
+
+    Returns:
+        JSON response with reset token and email if successful.
+
+    Error:
+        Respond with 403 if email is not registered.
+    """
+    email = request.form.get('email', None)
+    try:
+        reset_token = AUTH.get_reset_password_token(email)
+        return jsonify({"email": email, "reset_token": reset_token}), 200
+    except ValueError:
+        abort(403)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
